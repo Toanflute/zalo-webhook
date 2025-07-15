@@ -11,7 +11,7 @@ app.post("/", async (req, res) => {
     const message = data.message.text || "";
     const time = new Date().toISOString();
 
-    await fetch("https://script.google.com/macros/s/AKfyc.../exec", { // Dán URL Apps Script thật
+    await fetch("https://script.google.com/macros/s/AKfycbxwKOOAr__ljV6n2LrLYWIvaclFKNYBw-CuOiKv_Tjz1gMx6LWrjGhF4V8It7zfTj0ieA/exec", { // Dán URL Apps Script thật
         method: "POST",
         body: JSON.stringify({ zalo_id, message, time }),
         headers: { "Content-Type": "application/json" }

@@ -7,33 +7,29 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Nhận tin nhắn từ Zalo webhook
-app.post("/", async (req, res) => {
+app.post("/", (req, res) => {
     const data = req.body;
-    console.log("Webhook nhận:", JSON.stringify(data));  // Ghi log ra Render để bạn dễ kiểm tra
+    console.log("Webhook nhận:", JSON.stringify(data));
 
-    if (!data.message || !data.sender) {
-        console.log("Dữ liệu không hợp lệ, bỏ qua.");
-        return res.sendStatus(200);
-    }
+    // Luôn trả về 200 ngay lập tức cho Zalo
+    res.sendStatus(200);
+
+    // Xử lý song song, không cần đợi
+    if (!data.message || !data.sender) return;
 
     const zalo_id = data.sender.id;
     const message = data.message.text || "";
     const time = new Date().toISOString();
 
-    // ĐÂY LÀ LINK GOOGLE APPS SCRIPT BẠN CUNG CẤP
-    await fetch("https://script.google.com/macros/s/AKfycbxwKOOAr__ljV6n2LrLYWIvaclFKNYBw-CuOiKv_Tjz1gMx6LWrjGhF4V8It7zfTj0ieA/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbxwKOOAr__ljV6n2LrLYWIvaclFKNYBw-CuOiKv_Tjz1gMx6LWrjGhF4V8It7zfTj0ieA/exec", {
         method: "POST",
         body: JSON.stringify({ zalo_id, message, time }),
         headers: { "Content-Type": "application/json" }
-    });
-
-    console.log(`Đã gửi ${message} của user ${zalo_id} lên Google Sheets thành công.`);
-
-    res.sendStatus(200);
+    })
+    .then(() => console.log(`Đã gửi ${message} của user ${zalo_id} lên Google Sheets.`))
+    .catch((error) => console.error("Lỗi gửi Google Sheets:", error));
 });
 
-// Check trang chủ xem còn sống
 app.get("/", (req, res) => res.send("Webhook Zalo - OK!"));
 
 const PORT = process.env.PORT || 8080;

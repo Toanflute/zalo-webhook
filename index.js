@@ -1,13 +1,11 @@
 const express = require("express");
 const fetch = require("node-fetch");
-const path = require("path"); // Thêm path để xử lý thư mục public chính xác
+const path = require("path");
 
 const app = express();
 
-// Cho phép truy cập file tĩnh từ thư mục public (chứa file xác minh Zalo)
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.post("/", async (req, res) => {
     const data = req.body;
@@ -26,7 +24,6 @@ app.post("/", async (req, res) => {
     res.sendStatus(200);
 });
 
-// Đường dẫn kiểm tra cho Render hoạt động
 app.get("/", (req, res) => res.send("Webhook Zalo - OK!"));
 
 const PORT = process.env.PORT || 8080;
